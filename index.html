@@ -1,0 +1,60 @@
+<script>
+  const correctID = "you&me";
+  const correctPassword = "prity_siddhu";
+  let currentUser = null;
+
+  function login() {
+    const id = document.getElementById("userid").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    if (id === correctID && pass === correctPassword) {
+      currentUser = id;
+      sessionStorage.setItem("loggedInUser", id); // for session tracking
+      document.getElementById("login").style.display = "none";
+      document.getElementById("notepad").style.display = "block";
+      loadNote();
+    } else {
+      alert("Galat ID ya Password");
+    }
+  }
+
+  function logout() {
+    currentUser = null;
+    sessionStorage.removeItem("loggedInUser");
+    document.getElementById("notepad").style.display = "none";
+    document.getElementById("login").style.display = "block";
+    document.getElementById("diary").value = "";
+  }
+
+  function saveNote() {
+    if (!currentUser) return;
+    const content = document.getElementById("diary").value;
+    localStorage.setItem("note_" + currentUser, content);
+  }
+
+  function loadNote() {
+    if (!currentUser) return;
+    const content = localStorage.getItem("note_" + currentUser);
+    if (content) {
+      document.getElementById("diary").value = content;
+    }
+  }
+
+  // Auto-save every 5 seconds
+  setInterval(() => {
+    if (document.getElementById("notepad").style.display === "block") {
+      saveNote();
+    }
+  }, 5000);
+
+  // Auto-login from session if available
+  window.onload = () => {
+    const user = sessionStorage.getItem("loggedInUser");
+    if (user === correctID) {
+      currentUser = user;
+      document.getElementById("login").style.display = "none";
+      document.getElementById("notepad").style.display = "block";
+      loadNote();
+    }
+  }
+</script>
